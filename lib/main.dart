@@ -15,19 +15,18 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // TEMPORARY: Always show the login screen to debug the button issue.
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LZHPiano',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginScreen(), // Directly show the LoginScreen
+      home: const AuthChecker(), // Use AuthChecker to decide which screen to show
     );
   }
 }

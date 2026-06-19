@@ -8,26 +8,27 @@ class AuthRepository {
 
   AuthRepository(this._firebaseAuth, this._googleSignIn);
 
+  // Using a stream to listen to authentication state changes
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         // The user canceled the sign-in
-        return null;
+        return;
       }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      return await _firebaseAuth.signInWithCredential(credential);
+
+      await _firebaseAuth.signInWithCredential(credential);
     } catch (e) {
-      // Handle exceptions
-      print(e);
-      return null;
+      // Handle error, e.g., show a snackbar
+      print('Error during Google sign-in: $e');
     }
   }
 
