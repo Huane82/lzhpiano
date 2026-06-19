@@ -1,4 +1,5 @@
 
+import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -26,9 +27,14 @@ class AuthRepository {
       );
 
       await _firebaseAuth.signInWithCredential(credential);
-    } catch (e) {
+    } catch (e, s) {
       // Handle error, e.g., show a snackbar
-      print('Error during Google sign-in: $e');
+      developer.log(
+        'Error during Google sign-in',
+        name: 'com.lzhpiano.auth',
+        error: e,
+        stackTrace: s,
+      );
     }
   }
 
