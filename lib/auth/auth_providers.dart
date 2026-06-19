@@ -6,12 +6,10 @@ import 'package:myapp/auth/auth_repository.dart';
 
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-final googleSignInProvider = Provider<GoogleSignIn>((ref) => GoogleSignIn());
-
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(
     ref.watch(firebaseAuthProvider),
-    ref.watch(googleSignInProvider),
+    GoogleSignIn(),
   ),
 );
 
