@@ -29,19 +29,19 @@ enum NoteHand {
 // A placeholder song for development and testing purposes.
 final List<MusicalNote> placeholderSong = [
   // A simple C Major scale for the right hand
-  MusicalNote(hand: NoteHand.right, noteNumber: 60, startTime: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 400)), // C4
-  MusicalNote(hand: NoteHand.right, noteNumber: 62, startTime: const Duration(milliseconds: 1000), duration: const Duration(milliseconds: 400)),// D4
-  MusicalNote(hand: NoteHand.right, noteNumber: 64, startTime: const Duration(milliseconds: 1500), duration: const Duration(milliseconds: 400)),// E4
-  MusicalNote(hand: NoteHand.right, noteNumber: 65, startTime: const Duration(milliseconds: 2000), duration: const Duration(milliseconds: 400)),// F4
-  MusicalNote(hand: NoteHand.right, noteNumber: 67, startTime: const Duration(milliseconds: 2500), duration: const Duration(milliseconds: 400)),// G4
-  MusicalNote(hand: NoteHand.right, noteNumber: 69, startTime: const Duration(milliseconds: 3000), duration: const Duration(milliseconds: 400)),// A4
-  MusicalNote(hand: NoteHand.right, noteNumber: 71, startTime: const Duration(milliseconds: 3500), duration: const Duration(milliseconds: 400)),// B4
-  MusicalNote(hand: NoteHand.right, noteNumber: 72, startTime: const Duration(milliseconds: 4000), duration: const Duration(milliseconds: 800)),// C5
+  const MusicalNote(hand: NoteHand.right, noteNumber: 60, startTime: Duration(milliseconds: 500), duration: Duration(milliseconds: 400)), // C4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 62, startTime: Duration(milliseconds: 1000), duration: Duration(milliseconds: 400)),// D4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 64, startTime: Duration(milliseconds: 1500), duration: Duration(milliseconds: 400)),// E4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 65, startTime: Duration(milliseconds: 2000), duration: Duration(milliseconds: 400)),// F4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 67, startTime: Duration(milliseconds: 2500), duration: Duration(milliseconds: 400)),// G4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 69, startTime: Duration(milliseconds: 3000), duration: Duration(milliseconds: 400)),// A4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 71, startTime: Duration(milliseconds: 3500), duration: Duration(milliseconds: 400)),// B4
+  const MusicalNote(hand: NoteHand.right, noteNumber: 72, startTime: Duration(milliseconds: 4000), duration: Duration(milliseconds: 800)),// C5
 
   // A simple bass line for the left hand
-  MusicalNote(hand: NoteHand.left, noteNumber: 48, startTime: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 800)), // C3
-  MusicalNote(hand: NoteHand.left, noteNumber: 52, startTime: const Duration(milliseconds: 2000), duration: const Duration(milliseconds: 800)),// E3
-  MusicalNote(hand: NoteHand.left, noteNumber: 53, startTime: const Duration(milliseconds: 3500), duration: const Duration(milliseconds: 800)),// F3
+  const MusicalNote(hand: NoteHand.left, noteNumber: 48, startTime: Duration(milliseconds: 500), duration: Duration(milliseconds: 800)), // C3
+  const MusicalNote(hand: NoteHand.left, noteNumber: 52, startTime: Duration(milliseconds: 2000), duration: Duration(milliseconds: 800)),// E3
+  const MusicalNote(hand: NoteHand.left, noteNumber: 53, startTime: Duration(milliseconds: 3500), duration: Duration(milliseconds: 800)),// F3
 ];
 
 // Calculate the total duration of the placeholder song.

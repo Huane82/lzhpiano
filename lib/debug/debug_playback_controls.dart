@@ -55,7 +55,7 @@ class DebugPlaybackControls extends ConsumerWidget {
                   },
                 ),
               ),
-              Text('${playbackState.speed.toStringAsFixed(1)}x', style: TextStyle(color: Colors.white)),
+              Text('${playbackState.speed.toStringAsFixed(1)}x', style: const TextStyle(color: Colors.white)),
             ],
           ),
 

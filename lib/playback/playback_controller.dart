@@ -18,6 +18,9 @@ class PlaybackController extends StateNotifier<PlaybackState> implements TickerP
   // A private list of notes currently being played by the audio engine.
   final Set<int> _activeAudioNotes = {};
 
+  // Public property to enable/disable debug mode features.
+  final bool isDebug = true;
+
   PlaybackController(this._ref) : super(const PlaybackState());
 
   // --- Public API for UI Interaction ---
@@ -46,6 +49,10 @@ class PlaybackController extends StateNotifier<PlaybackState> implements TickerP
     state = state.copyWith(progress: newPosition);
     // After seeking, we need to re-evaluate which notes should be playing.
     _updateAudioEngine(newPosition);
+  }
+  
+  void setProgress(Duration newPosition) {
+    seek(newPosition);
   }
 
   void setSpeed(double newSpeed) {

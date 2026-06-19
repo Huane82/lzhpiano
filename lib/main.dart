@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:piano_mate/auth/auth_gate.dart';
+import 'package:myapp/auth/auth_gate.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:piano_mate/data/song_data.dart';
+import 'package:myapp/data/song_data.dart';
 import 'firebase_options.dart';
 
-import 'package:piano_mate/playback/playback_controller.dart';
-import 'package:piano_mate/playback/playback_state.dart';
+import 'package:myapp/playback/playback_controller.dart';
+import 'package:myapp/playback/playback_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

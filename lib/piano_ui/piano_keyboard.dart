@@ -23,8 +23,8 @@ class _PianoKeyboardState extends ConsumerState<PianoKeyboard> {
   // Cache layout information to avoid recalculating on every touch event.
   double _whiteKeyWidth = 0.0;
   double _keyboardHeight = 0.0;
-  List<Rect> _blackKeyHitboxes = [];
-  List<Rect> _whiteKeyHitboxes = [];
+  final List<Rect> _blackKeyHitboxes = [];
+  final List<Rect> _whiteKeyHitboxes = [];
   int _keyCount = 0;
 
   @override
