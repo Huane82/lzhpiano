@@ -27,12 +27,15 @@ dependencies:
 
   # Audio: Switched to a modern, maintained package
   audioplayers: ^6.0.0
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^4.0.0
+  build_runner: ^2.15.0
+  freezed: ^3.2.5
 
 flutter:
   uses-material-design: true

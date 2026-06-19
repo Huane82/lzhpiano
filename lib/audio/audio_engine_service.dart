@@ -4,23 +4,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-// 1. Define the state for our audio engine
 @immutable
 class AudioEngineState {
+  final bool isLoading;
   final bool isLoaded;
   final String? error;
 
-  const AudioEngineState({this.isLoaded = false, this.error});
+  const AudioEngineState({
+    this.isLoading = false,
+    this.isLoaded = false,
+    this.error,
+  });
 
-  AudioEngineState copyWith({bool? isLoaded, String? error}) {
+  AudioEngineState copyWith({
+    bool? isLoading,
+    bool? isLoaded,
+    String? error,
+  }) {
     return AudioEngineState(
+      isLoading: isLoading ?? this.isLoading,
       isLoaded: isLoaded ?? this.isLoaded,
       error: error ?? this.error,
     );
   }
 }
 
-// 2. Create the StateNotifier
 class AudioEngineService extends StateNotifier<AudioEngineState> {
   final Ref _ref;
   final List<AudioPlayer> _playerPool = [];
@@ -28,31 +36,29 @@ class AudioEngineService extends StateNotifier<AudioEngineState> {
   final AudioCache _audioCache = AudioCache(prefix: 'assets/audio/');
   final int _poolSize = 16;
 
+  // Constructor is now clean and synchronous.
   AudioEngineService(this._ref) : super(const AudioEngineState()) {
-    _initialize();
-  }
-
-  void _initialize() async {
-    // Initialize the player pool
+    // Initialize the player pool synchronously.
     for (int i = 0; i < _poolSize; i++) {
       _playerPool.add(AudioPlayer());
     }
-    // Begin loading samples immediately
-    await loadSamples();
   }
 
+  // This method is now explicitly called from the UI layer.
   Future<void> loadSamples() async {
-    if (state.isLoaded) return;
+    if (state.isLoaded || state.isLoading) return; // Prevent multiple loads
+
+    state = state.copyWith(isLoading: true, error: null);
+    debugPrint('Starting to cache audio samples...');
 
     try {
-      debugPrint('Caching audio samples...');
       final filesToCache = List.generate(88, (i) => '${i + 1}.mp3');
       await _audioCache.loadAll(filesToCache);
-      state = state.copyWith(isLoaded: true);
+      state = state.copyWith(isLoading: false, isLoaded: true);
       debugPrint('All 88 audio samples cached successfully!');
     } catch (e) {
       debugPrint('Error caching audio samples: $e');
-      state = state.copyWith(error: 'Failed to load piano samples. $e');
+      state = state.copyWith(isLoading: false, error: 'Failed to load piano samples. Please restart the app.');
     }
   }
 
@@ -60,8 +66,6 @@ class AudioEngineService extends StateNotifier<AudioEngineState> {
     try {
       return _playerPool.firstWhere((p) => p.state != PlayerState.playing);
     } catch (e) {
-      // This can happen if all players are busy.
-      // For now, we'll just reuse the first one.
       return _playerPool.first;
     }
   }
@@ -97,10 +101,8 @@ class AudioEngineService extends StateNotifier<AudioEngineState> {
   }
 }
 
-// 3. Create the StateNotifierProvider
 final audioEngineProvider = StateNotifierProvider<AudioEngineService, AudioEngineState>((ref) {
   return AudioEngineService(ref);
 });
 
-// Provider for the sustain pedal state remains the same.
 final sustainProvider = StateProvider<bool>((ref) => false);

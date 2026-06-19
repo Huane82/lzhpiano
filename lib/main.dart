@@ -1,19 +1,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:piano_mate/auth/auth_gate.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:myapp/auth/auth_providers.dart';
-import 'package:myapp/auth/login_screen.dart';
-import 'package:myapp/home/home_screen.dart';
+import 'package:piano_mate/data/song_data.dart';
 import 'firebase_options.dart';
+
+import 'package:piano_mate/playback/playback_controller.dart';
+import 'package:piano_mate/playback/playback_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // With StateNotifier, we no longer need to pre-initialize.
-  // We simply wrap the app in a ProviderScope.
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -23,49 +23,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'LZHPiano',
+      title: 'Piano Mate',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: Brightness.dark,
       ),
-      // The app will always start with the AuthChecker.
-      home: const AuthChecker(),
+      home: const AuthGate(),
     );
   }
 }
 
-class AuthChecker extends ConsumerWidget {
-  const AuthChecker({super.key});
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateChangesProvider);
+    final playbackState = ref.watch(playbackControllerProvider);
 
-    // The AuthChecker remains the same, directing to login or home.
-    return authState.when(
-      data: (user) => user != null ? const HomeScreen() : const LoginScreen(),
-      loading: () => const SplashScreen(loadingMessage: 'Checking Auth...'),
-      error: (error, stackTrace) => ErrorScreen(errorMessage: error.toString()),
-    );
-  }
-}
-
-// SplashScreen and ErrorScreen remain the same, they are useful helpers.
-class SplashScreen extends StatelessWidget {
-  final String loadingMessage;
-  const SplashScreen({super.key, required this.loadingMessage});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Piano Mate'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 20),
-            Text(loadingMessage, style: const TextStyle(fontSize: 18)),
+          children: <Widget>[
+            const Text(
+              'Welcome to Piano Mate!',
+            ),
+            // Add the debug playback controls here
+            if (ref.read(playbackControllerProvider.notifier).isDebug) 
+              DebugPlaybackControls(
+                playbackState: playbackState, 
+                songDuration: placeholderSongDuration
+              ),
           ],
         ),
       ),
@@ -73,31 +63,76 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
-class ErrorScreen extends StatelessWidget {
-  final String errorMessage;
-  const ErrorScreen({super.key, required this.errorMessage});
+
+class DebugPlaybackControls extends ConsumerWidget {
+  final PlaybackState playbackState;
+  final Duration songDuration;
+
+  const DebugPlaybackControls({super.key, required this.playbackState, required this.songDuration});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.red.shade900,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playbackController = ref.read(playbackControllerProvider.notifier);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text('Debug Controls', style: Theme.of(context).textTheme.headlineSmall),
+          // Play/Pause/Stop Buttons
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, color: Colors.white, size: 48),
-              const SizedBox(height: 20),
-              const Text(
-                'Audio Engine Error', // More specific title
-                style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+              IconButton(
+                icon: const Icon(Icons.play_arrow),
+                onPressed: playbackController.play,
               ),
-              const SizedBox(height: 10),
-              Text(errorMessage, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+              IconButton(
+                icon: const Icon(Icons.pause),
+                onPressed: playbackController.pause,
+              ),
+              IconButton(
+                icon: const Icon(Icons.stop),
+                onPressed: playbackController.stop,
+              ),
             ],
           ),
-        ),
+          // Speed Control Slider
+          Row(
+            children: [
+              const Text('Speed'),
+              Expanded(
+                child: Slider(
+                  value: playbackState.speed,
+                  min: 0.5,
+                  max: 2.0,
+                  onChanged: playbackController.setSpeed,
+                ),
+              ),
+              Text(playbackState.speed.toStringAsFixed(2)),
+            ],
+          ),
+          // Progress Slider
+          Slider(
+            value: playbackState.progress.inMilliseconds.toDouble(),
+            min: 0.0,
+            max: songDuration.inMilliseconds.toDouble(),
+            onChanged: (value) => playbackController.setProgress(Duration(milliseconds: value.toInt())),
+          ),
+          // Practice Mode Toggle
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Practice Mode:'),
+              Switch(
+                value: playbackState.practiceMode == PracticeMode.wait,
+                onChanged: (isWaiting) {
+                  playbackController.setPracticeMode(isWaiting ? PracticeMode.wait : PracticeMode.normal);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
